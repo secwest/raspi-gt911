@@ -1,0 +1,74 @@
+/dts-v1/;
+
+/ {
+	compatible = "brcm,bcm2835";
+
+	fragment@0 {
+		target = <0xffffffff>;
+
+		__overlay__ {
+
+			goodix_pins {
+				brcm,pins = <0x1B 0x16>;
+				brcm,function = <0x00 0x00>;
+				brcm,pull = <0x02 0x02>;
+				phandle = <0x01>;
+			};
+		};
+	};
+
+	fragment@1 {
+		target = <0xffffffff>;
+
+		__overlay__ {
+			#address-cells = <0x01>;
+			#size-cells = <0x00>;
+			status = "okay";
+
+			gt9271@14 {
+				compatible = "goodix,gt9271";
+				reg = <0x14>;
+				pinctrl-names = "default";
+				pinctrl-0 = <0x01>;
+				interrupt-parent = <0xffffffff>;
+				interrupts = <0x1B 0x02>;
+				irq-gpios = <0xffffffff 0x1B 0x00>;
+				reset-gpios = <0xffffffff 0x16 0x00>;
+				phandle = <0x02>;
+			};
+		};
+	};
+
+	__overrides__ {
+		interrupt = [00 00 00 01 62 72 63 6d 2c 70 69 6e 73 3a 30 00 00 00 00 02 69 6e 74 65 72 72 75 70 74 73 3a 30 00 00 00 00 02 69 72 71 2d 67 70 69 6f 73 3a 34 00];
+		reset = [00 00 00 01 62 72 63 6d 2c 70 69 6e 73 3a 34 00 00 00 00 02 72 65 73 65 74 2d 67 70 69 6f 73 3a 34 00];
+	};
+
+	__symbols__ {
+		goodix_pins = "/fragment@0/__overlay__/goodix_pins";
+		gt9271 = "/fragment@1/__overlay__/gt9271@14";
+	};
+
+	__fixups__ {
+		gpio = "/fragment@0:target:0\0/fragment@1/__overlay__/gt9271@14:interrupt-parent:0\0/fragment@1/__overlay__/gt9271@14:irq-gpios:0\0/fragment@1/__overlay__/gt9271@14:reset-gpios:0";
+		i2c1 = "/fragment@1:target:0";
+	};
+
+	__local_fixups__ {
+
+		fragment@1 {
+
+			__overlay__ {
+
+				gt9271@14 {
+					pinctrl-0 = <0x00>;
+				};
+			};
+		};
+
+		__overrides__ {
+			interrupt = <0x00 0x10 0x21>;
+			reset = <0x00 0x10>;
+		};
+	};
+};
